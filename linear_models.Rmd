@@ -1,0 +1,105 @@
+---
+title: "Linear models"
+output: github_document
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(p8105.datasets)
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+set.seed(1)
+```
+
+## Import data
+
+```{r}
+data("nyc_airbnb")
+nyc_airbnb = 
+  nyc_airbnb %>% 
+  mutate(stars = review_scores_location / 2) %>% 
+  rename(
+    borough = neighbourhood_group,
+    neighborhood = neighbourhood) %>% 
+  filter(borough != "Staten Island") %>% 
+  select(price, stars, borough, neighborhood, room_type)
+```
+
+## Fit a model
+
+```{r}
+
+nyc_airbnb %>% 
+  ggplot(aes(x=stars, y=price, color=borough))+ geom_point()
+```
+
+Let's fit a model we care about
+```{r}
+
+fit=lm(price~stars +borough, data=nyc_airbnb)
+```
+
+Let's look at the results...
+```{r}
+
+fit
+
+summary(fit)
+
+summary(fit)$coef
+
+coef(fit)
+
+residuals(fit)
+
+```
+
+Let's look at the results better...
+
+```{r}
+broom::glance(fit)
+
+broom::tidy (fit) %>% 
+  select(-std.error, -statistic) %>% 
+  mutate(
+    term=str_replace(term,"borough", "Borough: ")
+  ) %>% 
+  knitr::kable(digits=3)
+```
+
+## Be in control of factors
+
+```{r}
+nyc_airbnb=
+  nyc_airbnb %>% 
+  mutate(
+    borough=fct_infreq(borough),
+    room_type=fct_infreq(room_type)
+  )
+```
+
+Look at the previous plot again
+
+```{r}
+nyc_airbnb %>% 
+  ggplot(aes(x=stars, y=price, color=borough))+ geom_point()
+```
+
+```{r}
+fit=lm(price~stars+borough, data=nyc_airbnb)
+
+broom::tidy(fit)
+broom:: glance(fit)
+```
+
