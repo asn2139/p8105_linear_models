@@ -133,4 +133,27 @@ anova(fit_null, fit_alt) %>%
   broom::tidy()
 
 ```
+## Nest data, fit models
+
+This is pretty formal and complex
+```{r}
+
+fit=lm(price~ stars * borough + room_type * borough, data=nyc_airbnb)
+
+broom:: tidy(fit)
+```
+This is more exploratory but maybe easier to understand
+
+```{r}
+
+nyc_airbnb %>% 
+  nest(data= -borough) %>% 
+  mutate(
+    models= map(.x=data, ~lm(price~stars, data=.x)),
+    results=map(models, broom::tidy)
+  ) %>% 
+  select(-data, -models) %>% 
+  unnest(results) %>% 
+  
+```
 
