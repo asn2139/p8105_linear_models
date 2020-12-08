@@ -78,4 +78,9 @@ boot_sample(sim_df_nonconst) %>%
   geom_point(alpha=.3)+
   geom_smooth(method="lm")
 ```
+```{r}
+boot_sample(sim_df_nonconst) %>% 
+  lm(y~x, data=.) %>% 
+  broom::tidy()
+```
 

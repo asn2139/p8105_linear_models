@@ -85,3 +85,15 @@ boot_sample(sim_df_nonconst) %>%
     ## `geom_smooth()` using formula 'y ~ x'
 
 <img src="bootstrapping_files/figure-gfm/unnamed-chunk-5-1.png" width="90%" />
+
+``` r
+boot_sample(sim_df_nonconst) %>% 
+  lm(y~x, data=.) %>% 
+  broom::tidy()
+```
+
+    ## # A tibble: 2 x 5
+    ##   term        estimate std.error statistic   p.value
+    ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
+    ## 1 (Intercept)     1.90    0.0982      19.3 2.45e- 51
+    ## 2 x               3.14    0.0688      45.6 1.18e-122
